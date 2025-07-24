@@ -1,9 +1,10 @@
+// project/src/components/Auth/LoginForm.tsx
 import React, { useState } from 'react';
 import { Shield, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { clsx } from 'clsx';
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<{ onSwitchToRegister: () => void }> = ({ onSwitchToRegister }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -140,6 +141,11 @@ const LoginForm: React.FC = () => {
               >
                 User Demo
               </button>
+            </div>
+            <div className="mt-4 text-center">
+                <button onClick={onSwitchToRegister} className="text-sm text-blue-600 hover:underline">
+                    Create an account
+                </button>
             </div>
           </div>
         </div>
