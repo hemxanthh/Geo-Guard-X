@@ -42,33 +42,35 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     // Simulate connection
     setConnected(true);
 
-    // Generate demo data
+    // UPDATED: Fixed coordinates (no movement)
+    const baseLocation = {
+      latitude: 12.917861, // Your static lat
+      longitude: 77.591750, // Your static long
+    };
+
+    // UPDATED: Removed random movement; keep location fixed
     const generateDemoData = () => {
       const demoVehicleId = 'vehicle-1';
-      const baseLocation = { latitude: 28.6139, longitude: 77.2090 };
       
-      // Simulate vehicle movement
-      const randomOffset = () => (Math.random() - 0.5) * 0.01;
       const newLocation = {
-        latitude: baseLocation.latitude + randomOffset(),
-        longitude: baseLocation.longitude + randomOffset(),
-        speed: Math.random() * 60,
-        heading: Math.random() * 360,
+        ...baseLocation,
+        speed: 0,                  // UPDATED: vehicle not moving
+        heading: 0,                // UPDATED: fixed direction
         timestamp: new Date(),
       };
 
       const newStatus: VehicleStatus = {
         vehicleId: demoVehicleId,
         location: newLocation,
-        ignitionOn: Math.random() > 0.3,
-        engineLocked: Math.random() > 0.8,
-        batteryLevel: Math.floor(Math.random() * 40) + 60,
-        gsmSignal: Math.floor(Math.random() * 30) + 70,
-        gpsSignal: Math.floor(Math.random() * 20) + 80,
-        isMoving: newLocation.speed > 5,
+        ignitionOn: false,         // UPDATED: static ignition
+        engineLocked: false,       // UPDATED: static engine state
+        batteryLevel: 80,
+        gsmSignal: 90,
+        gpsSignal: 95,
+        isMoving: false,           // UPDATED: not moving
         lastUpdate: new Date(),
-        temperature: Math.floor(Math.random() * 30) + 20,
-        mileage: 45231 + Math.floor(Math.random() * 100),
+        temperature: 28,
+        mileage: 45231,
       };
 
       setVehicleStatus(prev => ({
@@ -76,7 +78,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         [demoVehicleId]: newStatus,
       }));
 
-      // Occasionally generate alerts
+      // Alert generation remains for demo
       if (Math.random() > 0.95) {
         const alertTypes = ['unauthorized_movement', 'low_battery', 'geofence_breach'] as const;
         const severities = ['low', 'medium', 'high'] as const;
@@ -97,9 +99,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       }
     };
 
-    // Update every 3 seconds for demo
+    // Interval remains to simulate periodic updates
     interval = setInterval(generateDemoData, 3000);
-    generateDemoData(); // Initial data
+    generateDemoData();
 
     return () => {
       if (interval) clearInterval(interval);
@@ -117,9 +119,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   const sendCommand = async (vehicleId: string, command: string): Promise<boolean> => {
     console.log(`Sending command ${command} to vehicle ${vehicleId}`);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    return Math.random() > 0.2; // 80% success rate
+    return Math.random() > 0.2;
   };
 
   const value = {
